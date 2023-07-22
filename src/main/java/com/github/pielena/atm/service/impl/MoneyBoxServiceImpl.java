@@ -8,6 +8,7 @@ import com.github.pielena.atm.exception.MoneyBoxException;
 import com.github.pielena.atm.service.CellService;
 import com.github.pielena.atm.service.MoneyBoxService;
 import lombok.AllArgsConstructor;
+import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -20,7 +21,7 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
     private CellService cellService;
 
     @Override
-    public List<Banknote> getMoney(MoneyBox moneyBox, int sum) {
+    public List<Banknote> getMoney(@NonNull MoneyBox moneyBox, int sum) {
 
         moneyBox.getCells().sort(Comparator.comparingInt(el -> -el.getBanknoteValue().getValue()));
         List<Banknote> result = new ArrayList<>();
@@ -47,7 +48,7 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
     }
 
     @Override
-    public void putMoney(MoneyBox moneyBox, List<Banknote> banknotes) {
+    public void putMoney(@NonNull MoneyBox moneyBox, @NonNull List<Banknote> banknotes) {
         for (Cell cell : moneyBox.getCells()) {
             List<Banknote> selectedBanknotes = banknotes.stream()
                     .filter(banknote -> banknote.banknoteValue().equals(cell.getBanknoteValue()))
@@ -62,7 +63,7 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
     }
 
     @Override
-    public int getBalance(MoneyBox moneyBox) {
+    public int getBalance(@NonNull MoneyBox moneyBox) {
         int sum = 0;
         for (Cell cell : moneyBox.getCells()) {
             sum += cell.getBanknoteValue().getValue() * cellService.getCurrentAmount(cell);
@@ -70,7 +71,7 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
         return sum;
     }
 
-    private void validateSum(MoneyBox moneyBox, int sum) {
+    private void validateSum(@NonNull MoneyBox moneyBox, int sum) {
         if (sum > getBalance(moneyBox)) {
             throw new MoneyBoxException("Not enough money in ATM");
         }

@@ -18,17 +18,16 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class CellServiceImplTest {
 
-    CellService cellService;
-    Cell cell;
-    Banknote banknote;
-    List<Banknote> banknotes;
+    private CellService cellService;
+    private Cell cell;
+    private Banknote banknote;
 
     @BeforeEach
     void setUp() {
         cellService = new CellServiceImpl();
         cell = new Cell(BanknoteValue.FIVE_HUNDRED);
         banknote = new Banknote(BanknoteValue.FIVE_HUNDRED);
-        banknotes = List.of(banknote, banknote, banknote, banknote, banknote);
+        List<Banknote> banknotes = List.of(banknote, banknote, banknote, banknote, banknote);
         cellService.putBanknotes(cell, banknotes);
     }
 

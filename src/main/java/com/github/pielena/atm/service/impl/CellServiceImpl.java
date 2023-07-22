@@ -4,6 +4,7 @@ import com.github.pielena.atm.exception.CellException;
 import com.github.pielena.atm.model.Banknote;
 import com.github.pielena.atm.model.Cell;
 import com.github.pielena.atm.service.CellService;
+import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 public class CellServiceImpl implements CellService {
 
     @Override
-    public void putBanknotes(Cell cell, List<Banknote> banknotes) {
+    public void putBanknotes(@NonNull Cell cell, @NonNull List<Banknote> banknotes) {
         checkBanknotesValue(cell, banknotes);
         if (cell.getBanknoteList().size() + banknotes.size() > cell.getCapacity()) {
             throw new CellException("Not enough cell space");
@@ -20,7 +21,7 @@ public class CellServiceImpl implements CellService {
     }
 
     @Override
-    public List<Banknote> getBanknotes(Cell cell, int amount) {
+    public List<Banknote> getBanknotes(@NonNull Cell cell, int amount) {
         if (cell.getBanknoteList().size() < amount) {
             throw new CellException("Not enough banknotes in cell");
         }
@@ -35,11 +36,11 @@ public class CellServiceImpl implements CellService {
     }
 
     @Override
-    public int getCurrentAmount(Cell cell) {
+    public int getCurrentAmount(@NonNull Cell cell) {
         return cell.getBanknoteList().size();
     }
 
-    private void checkBanknotesValue(Cell cell, List<Banknote> banknotes) throws CellException {
+    private void checkBanknotesValue(@NonNull Cell cell, @NonNull List<Banknote> banknotes) throws CellException {
         boolean isValid = banknotes.stream()
                 .allMatch(el -> cell.getBanknoteValue().equals(el.banknoteValue()));
         if (!isValid) {
