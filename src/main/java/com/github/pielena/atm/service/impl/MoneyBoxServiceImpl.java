@@ -1,14 +1,12 @@
 package com.github.pielena.atm.service.impl;
 
-import com.github.pielena.atm.exception.CellException;
+import com.github.pielena.atm.exception.MoneyBoxException;
 import com.github.pielena.atm.model.Banknote;
 import com.github.pielena.atm.model.Cell;
 import com.github.pielena.atm.model.MoneyBox;
-import com.github.pielena.atm.exception.MoneyBoxException;
 import com.github.pielena.atm.service.CellService;
 import com.github.pielena.atm.service.MoneyBoxService;
 import lombok.AllArgsConstructor;
-import lombok.NonNull;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,7 +19,11 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
     private CellService cellService;
 
     @Override
-    public List<Banknote> getMoney(@NonNull MoneyBox moneyBox, int sum) {
+    public List<Banknote> getMoney(MoneyBox moneyBox, int sum) {
+
+        if (moneyBox == null) {
+            throw new MoneyBoxException("Moneybox can't be null");
+        }
 
         moneyBox.getCells().sort(Comparator.comparingInt(el -> -el.getBanknoteValue().getValue()));
         List<Banknote> result = new ArrayList<>();
@@ -48,22 +50,26 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
     }
 
     @Override
-    public void putMoney(@NonNull MoneyBox moneyBox, @NonNull List<Banknote> banknotes) {
+    public void putMoney(MoneyBox moneyBox, List<Banknote> banknotes) {
+        if (moneyBox == null || banknotes == null) {
+            throw new MoneyBoxException("Moneybox or banknotes can't be null");
+        }
+
         for (Cell cell : moneyBox.getCells()) {
             List<Banknote> selectedBanknotes = banknotes.stream()
                     .filter(banknote -> banknote.banknoteValue().equals(cell.getBanknoteValue()))
                     .collect(Collectors.toList());
-            try {
-                cellService.putBanknotes(cell, selectedBanknotes);
-            }
-            catch (CellException e) {
-                throw new MoneyBoxException("Too many banknotes");
-            }
+
+            cellService.putBanknotes(cell, selectedBanknotes);
         }
     }
 
     @Override
-    public int getBalance(@NonNull MoneyBox moneyBox) {
+    public int getBalance(MoneyBox moneyBox) {
+        if (moneyBox == null) {
+            throw new MoneyBoxException("Moneybox can't be null");
+        }
+
         int sum = 0;
         for (Cell cell : moneyBox.getCells()) {
             sum += cell.getBanknoteValue().getValue() * cellService.getCurrentAmount(cell);
@@ -71,7 +77,7 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
         return sum;
     }
 
-    private void validateSum(@NonNull MoneyBox moneyBox, int sum) {
+    private void validateSum(MoneyBox moneyBox, int sum) {
         if (sum > getBalance(moneyBox)) {
             throw new MoneyBoxException("Not enough money in ATM");
         }

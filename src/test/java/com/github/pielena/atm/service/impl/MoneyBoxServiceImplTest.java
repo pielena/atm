@@ -1,5 +1,6 @@
 package com.github.pielena.atm.service.impl;
 
+import com.github.pielena.atm.exception.CellException;
 import com.github.pielena.atm.exception.MoneyBoxException;
 import com.github.pielena.atm.model.Banknote;
 import com.github.pielena.atm.model.BanknoteValue;
@@ -88,9 +89,9 @@ class MoneyBoxServiceImplTest {
                 .mapToObj(el -> new Banknote(BanknoteValue.ONE_HUNDRED))
                 .collect(Collectors.toList());
 
-        Exception thrown = assertThrows(MoneyBoxException.class,
+        Exception thrown = assertThrows(CellException.class,
                 () -> moneyBoxService.putMoney(moneyBox, banknotes));
-        assertEquals("Too many banknotes", thrown.getMessage());
+        assertEquals("Not enough cell space", thrown.getMessage());
     }
 
     @Test
