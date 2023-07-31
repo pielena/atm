@@ -11,7 +11,6 @@ import lombok.AllArgsConstructor;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @AllArgsConstructor
 public class MoneyBoxServiceImpl implements MoneyBoxService {
@@ -58,7 +57,7 @@ public class MoneyBoxServiceImpl implements MoneyBoxService {
         for (Cell cell : moneyBox.getCells()) {
             List<Banknote> selectedBanknotes = banknotes.stream()
                     .filter(banknote -> banknote.banknoteValue().equals(cell.getBanknoteValue()))
-                    .collect(Collectors.toList());
+                    .toList();
 
             cellService.putBanknotes(cell, selectedBanknotes);
         }
